@@ -79,9 +79,9 @@ class RegisterPage extends StatelessWidget {
               onPressed: () => goToHome(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryBlue,
-                padding: const EdgeInsets.symmetric(vertical: 14),
+                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 35),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(14),
                 ),
               ),
               child: const Text(
