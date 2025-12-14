@@ -1,20 +1,50 @@
 import 'package:flutter/material.dart';
-import 'home_page.dart';
-import 'register_page.dart';
+import 'package:proyecto1/pages/home_page.dart';
+import 'package:proyecto1/pages/register_page.dart';
+import 'package:proyecto1/services/api_service.dart';
 
 const Color primaryBlue = Color(0xFF0A2342);
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final ApiService apiService = ApiService();
+  bool _isLoading = false;
 
-  void goToHome(BuildContext context) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const HomePage()),
+  void _login() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    final success = await apiService.login(
+      emailController.text,
+      passwordController.text,
     );
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (success) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const HomePage()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error: Credenciales incorrectas o problema de conexión.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   @override
@@ -27,8 +57,6 @@ class LoginPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              
-              const SizedBox(height: 30),
               const Text(
                 "I&C",
                 textAlign: TextAlign.center,
@@ -38,65 +66,51 @@ class LoginPage extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
               const SizedBox(height: 40),
-
-              // Campo de email
               TextField(
                 controller: emailController,
                 decoration: InputDecoration(
                   labelText: "Correo",
-                  prefixIcon: const Icon(Icons.email),
+                  prefixIcon: const Icon(Icons.email, color: primaryBlue),
                   filled: true,
                   fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
+                keyboardType: TextInputType.emailAddress,
               ),
-
               const SizedBox(height: 20),
-
-              // Campo de password
               TextField(
                 controller: passwordController,
                 obscureText: true,
                 decoration: InputDecoration(
                   labelText: "Contraseña",
-                  prefixIcon: const Icon(Icons.lock),
+                  prefixIcon: const Icon(Icons.lock, color: primaryBlue),
                   filled: true,
                   fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
               ),
-
               const SizedBox(height: 30),
-
-              // Botón de iniciar sesión
-              ElevatedButton(
-                onPressed: () => goToHome(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryBlue,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text(
-                  "Iniciar Sesión",
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
-              ),
-
+              _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : ElevatedButton(
+                      onPressed: _login,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryBlue,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: const Text(
+                        "Iniciar Sesión",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
               const SizedBox(height: 20),
-
               TextButton(
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (_) => RegisterPage()),
+                    MaterialPageRoute(builder: (_) => const RegisterPage()),
                   );
                 },
                 child: const Text(

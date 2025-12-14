@@ -3,6 +3,8 @@ import 'login_page.dart';
 import 'register_page.dart';
 
 class WelcomePage extends StatelessWidget {
+  const WelcomePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
