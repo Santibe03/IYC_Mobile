@@ -109,9 +109,9 @@ class _MyReservationsPageState extends State<MyReservationsPage> {
                         final String status = res['condition'] ?? "UNKNOWN";
 
                         Color statusColor;
-                        if (status == "CONFIRMED")
+                        if (status == "CONFIRMED") {
                           statusColor = Colors.green;
-                        else if (status == "CANCELLED")
+                        } else if (status == "CANCELLED")
                           statusColor = Colors.red;
                         else
                           statusColor = Colors.orange;
