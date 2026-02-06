@@ -189,4 +189,30 @@ class ApiService {
       return false;
     }
   }
+
+  // Método para obtener restaurantes disponibles (para clientes)
+  Future<List<dynamic>> getRestaurantesDisponibles() async {
+    final url = Uri.parse('${ApiConstants.baseUrl}/api/restaurantes');
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          if (_token != null) 'Authorization': 'Bearer $_token',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> restaurantes = jsonDecode(response.body);
+        debugPrint('Restaurantes cargados: ${restaurantes.length}');
+        return restaurantes;
+      } else {
+        debugPrint('Error al cargar restaurantes: ${response.statusCode}');
+        return [];
+      }
+    } catch (e) {
+      debugPrint('Error de conexión: $e');
+      return [];
+    }
+  }
 }
