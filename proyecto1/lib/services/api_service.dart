@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:proyecto1/constants/api_constants.dart';
 import 'package:proyecto1/dto/register_request_dto.dart';
-import 'package:proyecto1/dto/tipo_documento_dto.dart';
+import '../dto/tipo_documento_dto.dart';
 
 class ApiService {
   // Almacenamiento temporal de sesión (En una app real usar SharedPreferences o SecureStorage)
