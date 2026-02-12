@@ -17,4 +17,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-// pense que estaba en otra rama perdon, xdxd
