@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'reservation_form_page.dart';
 import 'my_reservations_page.dart';
 import 'package:proyecto1/services/api_service.dart';
+import '../dto/restaurante_dto.dart';
 
 const Color primaryBlue = Color(0xFF0A2342);
 
@@ -314,47 +315,63 @@ class CategoriesList extends StatelessWidget {
   }
 }
 
-class RestaurantList extends StatelessWidget {
+class RestaurantList extends StatefulWidget {
   const RestaurantList({super.key});
 
   @override
+  State<RestaurantList> createState() => _RestaurantListState();
+}
+
+class _RestaurantListState extends State<RestaurantList> {
+  late Future<List<RestauranteDTO>> _restaurantesFuture;
+  final ApiService _apiService = ApiService();
+
+  @override
+  void initState() {
+    super.initState();
+    _restaurantesFuture = _apiService.getRestaurantesDisponibles();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Column(
-      children: const [
-        RestaurantCard(
-          name: "La Casa del Pollo",
-          location: "Calle 123, Bogotá",
-          image: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe",
-        ),
-        RestaurantCard(
-          name: "Pizzería Napoli",
-          location: "Cra 45 # 22",
-          image: "https://images.unsplash.com/photo-1600891964599-f61ba0e24092",
-        ),
-        RestaurantCard(
-          name: "Sushi Sakura",
-          location: "Zona Rosa",
-          image: "https://images.unsplash.com/photo-1553621042-f6e147245754",
-        ),
-      ],
+    return FutureBuilder<List<RestauranteDTO>>(
+      future: _restaurantesFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (snapshot.hasError) {
+          return const Center(child: Text("Error al cargar restaurantes"));
+        }
+
+        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text("No hay restaurantes disponibles"));
+        }
+
+        final restaurantes = snapshot.data!;
+
+        return Column(
+          children: restaurantes.map((restaurante) {
+            return RestaurantCard(restaurante: restaurante);
+          }).toList(),
+        );
+      },
     );
   }
 }
 
 class RestaurantCard extends StatelessWidget {
-  final String name;
-  final String location;
-  final String image;
+  final RestauranteDTO restaurante;
 
-  const RestaurantCard({
-    super.key,
-    required this.name,
-    required this.location,
-    required this.image,
-  });
+  const RestaurantCard({super.key, required this.restaurante});
 
   @override
   Widget build(BuildContext context) {
+    // Imagen por defecto o aleatoria si no hay URL
+    final String imageUrl =
+        "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?fit=crop&w=500&q=60";
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
@@ -376,7 +393,7 @@ class RestaurantCard extends StatelessWidget {
               bottomLeft: Radius.circular(16),
             ),
             child: Image.network(
-              image,
+              imageUrl,
               height: 100,
               width: 100,
               fit: BoxFit.cover,
@@ -384,7 +401,11 @@ class RestaurantCard extends StatelessWidget {
                 height: 100,
                 width: 100,
                 color: Colors.grey[300],
-                child: const Icon(Icons.broken_image, size: 40),
+                child: const Icon(
+                  Icons.restaurant,
+                  size: 40,
+                  color: Colors.grey,
+                ),
               ),
             ),
           ),
@@ -396,7 +417,7 @@ class RestaurantCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    name,
+                    restaurante.nombre,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -406,8 +427,15 @@ class RestaurantCard extends StatelessWidget {
                   const SizedBox(height: 6),
 
                   Text(
-                    location,
+                    restaurante.direccion,
                     style: const TextStyle(color: Colors.grey, fontSize: 14),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    restaurante.contacto,
+                    style: const TextStyle(color: primaryBlue, fontSize: 12),
                   ),
 
                   const SizedBox(height: 10),
@@ -417,7 +445,10 @@ class RestaurantCard extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ReservationFormPage(),
+                          builder: (context) => ReservationFormPage(
+                            restaurantId: restaurante.id,
+                            restaurantName: restaurante.nombre,
+                          ),
                         ),
                       );
                     },

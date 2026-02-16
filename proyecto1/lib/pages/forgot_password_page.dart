@@ -1,49 +1,55 @@
 import 'package:flutter/material.dart';
-import 'package:proyecto1/pages/forgot_password_page.dart';
-import 'package:proyecto1/pages/home_page.dart';
-import 'package:proyecto1/pages/register_page.dart';
 import 'package:proyecto1/services/api_service.dart';
 
 const Color primaryBlue = Color(0xFF0A2342);
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class ForgotPasswordPage extends StatefulWidget {
+  const ForgotPasswordPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
   final ApiService apiService = ApiService();
   bool _isLoading = false;
 
-  void _login() async {
+  void _requestReset() async {
+    if (emailController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor ingresa tu correo electrónico'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
 
-    final success = await apiService.login(
-      emailController.text,
-      passwordController.text,
-    );
+    final success = await apiService.requestPasswordReset(emailController.text);
 
     setState(() {
       _isLoading = false;
     });
 
     if (success) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomePage()),
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Si el correo existe, recibirás instrucciones.\nRevisa los logs del servidor para obtener el token.',
+          ),
+          backgroundColor: Colors.green,
+          duration: Duration(seconds: 5),
+        ),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            'Error: Credenciales incorrectas o problema de conexión.',
-          ),
+          content: Text('Error al procesar la solicitud. Intenta nuevamente.'),
           backgroundColor: Colors.red,
         ),
       );
@@ -54,26 +60,39 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
+      appBar: AppBar(
+        title: const Text('Recuperar Contraseña'),
+        backgroundColor: primaryBlue,
+        foregroundColor: Colors.white,
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              const Icon(Icons.lock_reset, size: 80, color: primaryBlue),
+              const SizedBox(height: 20),
               const Text(
-                "I&C",
+                "¿Olvidaste tu contraseña?",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: primaryBlue,
-                  fontSize: 42,
+                  fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                "Ingresa tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey, fontSize: 14),
               ),
               const SizedBox(height: 40),
               TextField(
                 controller: emailController,
                 decoration: InputDecoration(
-                  labelText: "Correo",
+                  labelText: "Correo Electrónico",
                   prefixIcon: const Icon(Icons.email, color: primaryBlue),
                   filled: true,
                   fillColor: Colors.white,
@@ -83,25 +102,11 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 keyboardType: TextInputType.emailAddress,
               ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: "Contraseña",
-                  prefixIcon: const Icon(Icons.lock, color: primaryBlue),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
               const SizedBox(height: 30),
               _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : ElevatedButton(
-                      onPressed: _login,
+                      onPressed: _requestReset,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: primaryBlue,
                         padding: const EdgeInsets.symmetric(vertical: 14),
@@ -110,34 +115,17 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       child: const Text(
-                        "Iniciar Sesión",
+                        "Enviar Instrucciones",
                         style: TextStyle(fontSize: 16, color: Colors.white),
                       ),
                     ),
               const SizedBox(height: 20),
               TextButton(
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => const RegisterPage()),
-                  );
+                  Navigator.pop(context);
                 },
                 child: const Text(
-                  "¿No tienes cuenta? Registrarse",
-                  style: TextStyle(color: primaryBlue),
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const ForgotPasswordPage(),
-                    ),
-                  );
-                },
-                child: const Text(
-                  "¿Olvidaste tu contraseña?",
+                  "Volver al inicio de sesión",
                   style: TextStyle(color: primaryBlue),
                 ),
               ),

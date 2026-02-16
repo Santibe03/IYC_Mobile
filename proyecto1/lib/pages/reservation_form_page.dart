@@ -3,8 +3,15 @@ import 'package:proyecto1/services/api_service.dart';
 
 class ReservationFormPage extends StatefulWidget {
   final Map<String, dynamic>? preFilledData;
+  final int? restaurantId;
+  final String? restaurantName;
 
-  const ReservationFormPage({super.key, this.preFilledData});
+  const ReservationFormPage({
+    super.key,
+    this.preFilledData,
+    this.restaurantId,
+    this.restaurantName,
+  });
 
   @override
   State<ReservationFormPage> createState() => _ReservationFormPageState();
@@ -96,6 +103,33 @@ class _ReservationFormPageState extends State<ReservationFormPage> {
               style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 20),
+
+            if (widget.restaurantName != null)
+              Container(
+                margin: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.blue[50],
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.blue[200]!),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.store, color: Color(0xFF0A2342)),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        "Restaurante: ${widget.restaurantName}",
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0A2342),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
             _buildTextField(
               "ID de Mesa",

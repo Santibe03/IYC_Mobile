@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:proyecto1/constants/api_constants.dart';
 import 'package:proyecto1/dto/register_request_dto.dart';
 import '../dto/tipo_documento_dto.dart';
+import '../dto/restaurante_dto.dart';
 
 class ApiService {
   // Almacenamiento temporal de sesión (En una app real usar SharedPreferences o SecureStorage)
@@ -191,7 +192,7 @@ class ApiService {
   }
 
   // Método para obtener restaurantes disponibles (para clientes)
-  Future<List<dynamic>> getRestaurantesDisponibles() async {
+  Future<List<RestauranteDTO>> getRestaurantesDisponibles() async {
     final url = Uri.parse('${ApiConstants.baseUrl}/api/restaurantes');
     try {
       final response = await http.get(
@@ -203,7 +204,11 @@ class ApiService {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> restaurantes = jsonDecode(response.body);
+        debugPrint('Raw response: ${response.body}'); // DEBUG
+        final List<dynamic> body = jsonDecode(response.body);
+        final List<RestauranteDTO> restaurantes = body
+            .map((item) => RestauranteDTO.fromJson(item))
+            .toList();
         debugPrint('Restaurantes cargados: ${restaurantes.length}');
         return restaurantes;
       } else {
@@ -211,8 +216,56 @@ class ApiService {
         return [];
       }
     } catch (e) {
-      debugPrint('Error de conexión: $e');
+      debugPrint('Error de conexión o parseo: $e');
       return [];
+    }
+  }
+
+  // Recuperación de contraseña - Paso 1: Solicitar reset
+  Future<bool> requestPasswordReset(String email) async {
+    final url = Uri.parse(
+      '${ApiConstants.baseUrl}/auth/request-password-reset',
+    );
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email}),
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        debugPrint('Solicitud de recuperación enviada para: $email');
+        return true;
+      } else {
+        debugPrint('Error al solicitar recuperación: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Error de conexión al solicitar recuperación: $e');
+      return false;
+    }
+  }
+
+  // Recuperación de contraseña - Paso 2: Restablecer con token
+  Future<bool> resetPassword(String token, String newPassword) async {
+    final url = Uri.parse('${ApiConstants.baseUrl}/auth/reset-password');
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'key': token, 'newPassword': newPassword}),
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        debugPrint('Contraseña restablecida exitosamente');
+        return true;
+      } else {
+        debugPrint('Error al restablecer contraseña: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Error de conexión al restablecer contraseña: $e');
+      return false;
     }
   }
 }

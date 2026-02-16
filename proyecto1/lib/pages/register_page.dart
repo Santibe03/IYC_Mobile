@@ -34,7 +34,10 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: const Text('Crear Cuenta', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Crear Cuenta',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         backgroundColor: primaryBlue,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -47,17 +50,26 @@ class _RegisterPageState extends State<RegisterPage> {
             children: [
               const Text(
                 'Paso 1: Tu cuenta',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: primaryBlue),
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: primaryBlue,
+                ),
               ),
               const SizedBox(height: 20),
               TextFormField(
                 controller: emailController,
                 decoration: InputDecoration(
                   labelText: 'Correo Electrónico',
-                  prefixIcon: const Icon(Icons.email_outlined, color: primaryBlue),
+                  prefixIcon: const Icon(
+                    Icons.email_outlined,
+                    color: primaryBlue,
+                  ),
                   filled: true,
                   fillColor: Colors.white,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
@@ -73,14 +85,28 @@ class _RegisterPageState extends State<RegisterPage> {
                 obscureText: true,
                 decoration: InputDecoration(
                   labelText: 'Contraseña',
-                  prefixIcon: const Icon(Icons.lock_outline, color: primaryBlue),
+                  prefixIcon: const Icon(
+                    Icons.lock_outline,
+                    color: primaryBlue,
+                  ),
                   filled: true,
                   fillColor: Colors.white,
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 validator: (value) {
-                  if (value == null || value.length < 6) {
-                    return 'La contraseña debe tener al menos 6 caracteres';
+                  if (value == null || value.isEmpty) {
+                    return 'La contraseña es obligatoria';
+                  }
+                  if (value.length > 12) {
+                    return 'Máximo 12 caracteres';
+                  }
+                  // Regex: Al menos una mayúscula, un número y un caracter especial
+                  // Nota: \W incluye caracteres especiales, validamos que exista al menos uno.
+                  RegExp regex = RegExp(r'^(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).*$');
+                  if (!regex.hasMatch(value)) {
+                    return 'Use mayúscula, número y caracter especial';
                   }
                   return null;
                 },
@@ -91,9 +117,14 @@ class _RegisterPageState extends State<RegisterPage> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryBlue,
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                child: const Text('Siguiente', style: TextStyle(fontSize: 16, color: Colors.white)),
+                child: const Text(
+                  'Siguiente',
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
               ),
             ],
           ),
