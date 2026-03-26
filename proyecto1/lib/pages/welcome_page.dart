@@ -8,14 +8,14 @@ class WelcomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF0A1A2F), // azul oscuro elegante
+      backgroundColor: const Color(0xFF0A1A2F), // azul oscuro elegante
       body: Padding(
         padding: const EdgeInsets.all(25.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
+            const Text(
               "I&C",
               textAlign: TextAlign.center,
               style: TextStyle(
@@ -25,13 +25,13 @@ class WelcomePage extends StatelessWidget {
                 letterSpacing: 3,
               ),
             ),
-            SizedBox(height: 60),
+            const SizedBox(height: 60),
 
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
-                foregroundColor: Color(0xFF0A1A2F),
-                padding: EdgeInsets.symmetric(vertical: 15),
+                foregroundColor: const Color(0xFF0A1A2F),
+                padding: const EdgeInsets.symmetric(vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -39,20 +39,20 @@ class WelcomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => LoginPage()),
+                  MaterialPageRoute(builder: (_) => const LoginPage()),
                 );
               },
-              child: Text(
+              child: const Text(
                 "Iniciar Sesión",
                 style: TextStyle(fontSize: 18),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
 
             OutlinedButton(
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: Colors.white, width: 2),
-                padding: EdgeInsets.symmetric(vertical: 15),
+                side: const BorderSide(color: Colors.white, width: 2),
+                padding: const EdgeInsets.symmetric(vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -60,10 +60,10 @@ class WelcomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => RegisterPage()),
+                  MaterialPageRoute(builder: (_) => const RegisterPage()),
                 );
               },
-              child: Text(
+              child: const Text(
                 "Registrarse",
                 style: TextStyle(fontSize: 18, color: Colors.white),
               ),

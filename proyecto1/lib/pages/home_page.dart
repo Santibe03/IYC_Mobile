@@ -151,11 +151,11 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
+    return const SingleChildScrollView(
+      padding: EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
+        children: [
           HeaderBanner(),
           SizedBox(height: 20),
           SearchBarWidget(),
@@ -369,7 +369,7 @@ class RestaurantCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Imagen por defecto o aleatoria si no hay URL
-    final String imageUrl =
+    const String imageUrl =
         "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?fit=crop&w=500&q=60";
 
     return Container(

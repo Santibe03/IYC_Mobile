@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'pages/welcome_page.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'I&C',
       home: WelcomePage(), // 👈 ESTA ES LA QUE APARECE AL INICIAR

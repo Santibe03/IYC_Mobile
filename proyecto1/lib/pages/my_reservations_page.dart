@@ -30,7 +30,7 @@ class _MyReservationsPageState extends State<MyReservationsPage> {
         _isLoading = false;
       });
       // Small delay to ensure build is complete before snackbar
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
