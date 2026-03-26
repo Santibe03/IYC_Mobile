@@ -6,7 +6,7 @@ class PersonDTO {
   final String? secondLastName;
   final int phoneNumber;
   final String? bornDate; // Formato YYYY-MM-DD
-  final int documentTypeId; // Solo el ID del tipo de documento
+  final String documentType;
 
   PersonDTO({
     required this.documentNumber,
@@ -16,7 +16,7 @@ class PersonDTO {
     this.secondLastName,
     required this.phoneNumber,
     this.bornDate,
-    required this.documentTypeId,
+    required this.documentType,
   });
 
   Map<String, dynamic> toJson() => {
@@ -27,6 +27,6 @@ class PersonDTO {
         'secondLastName': secondLastName,
         'phoneNumber': phoneNumber,
         'bornDate': bornDate,
-        'documentTypeId': documentTypeId, // Corregido para enviar solo el ID
+        'documentType': documentType,
       };
 }

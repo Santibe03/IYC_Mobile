@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:proyecto1/constants/api_constants.dart';
 import 'package:proyecto1/dto/register_request_dto.dart';
-import '../dto/tipo_documento_dto.dart';
+
 import '../dto/restaurante_dto.dart';
 
 class ApiService {
@@ -64,30 +64,7 @@ class ApiService {
     }
   }
 
-  Future<List<TipoDocumentoDTO>> getTipoDocumentos() async {
-    final url = Uri.parse(
-      '${ApiConstants.baseUrl}/api/tipo-documentos',
-    ); // Endpoint a confirmar
-    try {
-      final response = await http.get(url);
 
-      if (response.statusCode == 200) {
-        List<dynamic> body = jsonDecode(response.body);
-        List<TipoDocumentoDTO> tiposDocumento = body
-            .map((dynamic item) => TipoDocumentoDTO.fromJson(item))
-            .toList();
-        return tiposDocumento;
-      } else {
-        debugPrint(
-          'Error al obtener tipos de documento: ${response.statusCode}',
-        );
-        return [];
-      }
-    } catch (e) {
-      debugPrint('Error de conexión al obtener tipos de documento: $e');
-      return [];
-    }
-  }
 
   Future<bool> createReservation(Map<String, dynamic> reservationData) async {
     final url = Uri.parse(

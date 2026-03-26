@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Para formatear la fecha
 import 'package:proyecto1/dto/person_dto.dart';
 import 'package:proyecto1/dto/register_request_dto.dart';
-import 'package:proyecto1/dto/tipo_documento_dto.dart';
+// import 'package:proyecto1/dto/tipo_documento_dto.dart';
 import 'package:proyecto1/dto/user_dto.dart';
 import 'package:proyecto1/pages/login_page.dart';
 import 'package:proyecto1/services/api_service.dart';
@@ -41,12 +41,21 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
   final TextEditingController bornDateController = TextEditingController();
 
   // Para el dropdown de tipo de documento
-  List<TipoDocumentoDTO> _tiposDocumento = [];
-  int? _selectedDocumentTypeId;
+  final List<Map<String, String>> _tiposDocumento = [
+    {'id': 'CC', 'name': 'Cédula de Ciudadanía'},
+    {'id': 'TI', 'name': 'Tarjeta de Identidad'},
+    {'id': 'CE', 'name': 'Cédula de Extranjería'},
+    {'id': 'RC', 'name': 'Registro Civil'},
+    {'id': 'PA', 'name': 'Pasaporte'},
+    {'id': 'DIE', 'name': 'Documento de Identificación Extranjero'},
+    {'id': 'PEP', 'name': 'Permiso Especial de Permanencia'},
+    {'id': 'PPT', 'name': 'Permiso por Protección Temporal'},
+  ];
+  String? _selectedDocumentType;
 
   void _register() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_selectedDocumentTypeId == null) {
+    if (_selectedDocumentType == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Por favor, selecciona un tipo de documento'),
@@ -80,7 +89,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
       bornDate: bornDateController.text.isNotEmpty
           ? bornDateController.text
           : null,
-      documentTypeId: _selectedDocumentTypeId!,
+      documentType: _selectedDocumentType!,
     );
 
     final registerRequest = RegisterRequestDTO(
@@ -90,7 +99,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
 
     // --- LOGS DE DEPURACIÓN ---
     debugPrint(
-      "ID de tipo de documento seleccionado: $_selectedDocumentTypeId",
+      "ID de tipo de documento seleccionado: $_selectedDocumentType",
     );
     debugPrint(
       "Cuerpo de la petición a enviar: ${jsonEncode(registerRequest.toJson())}",
@@ -132,14 +141,6 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
   @override
   void initState() {
     super.initState();
-    _loadTiposDocumento();
-  }
-
-  Future<void> _loadTiposDocumento() async {
-    final data = await apiService.getTipoDocumentos();
-    setState(() {
-      _tiposDocumento = data;
-    });
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -220,8 +221,8 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
               const SizedBox(height: 16),
               _tiposDocumento.isEmpty
                   ? const Center(child: CircularProgressIndicator())
-                  : DropdownButtonFormField<int>(
-                      initialValue: _selectedDocumentTypeId,
+                  : DropdownButtonFormField<String>(
+                      initialValue: _selectedDocumentType,
                       hint: const Text('Tipo de Documento'),
                       decoration: InputDecoration(
                         prefixIcon: const Icon(
@@ -235,14 +236,14 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
                         ),
                       ),
                       items: _tiposDocumento.map((tipo) {
-                        return DropdownMenuItem<int>(
-                          value: tipo.id,
-                          child: Text(tipo.documentName),
+                        return DropdownMenuItem<String>(
+                          value: tipo['id'],
+                          child: Text(tipo['name']!),
                         );
                       }).toList(),
                       onChanged: (value) {
                         setState(() {
-                          _selectedDocumentTypeId = value;
+                          _selectedDocumentType = value;
                         });
                       },
                       validator: (value) =>
